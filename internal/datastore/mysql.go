@@ -58,7 +58,7 @@ func (c *MySQLConnection) Migrate(ctx context.Context, tcp kamajiv1alpha1.Tenant
 	}
 	defer os.RemoveAll(dir)
 
-	if _, err = c.db.ExecContext(ctx, fmt.Sprintf("USE %s_%s", tcp.GetNamespace(), tcp.GetName())); err != nil {
+	if _, err = c.db.ExecContext(ctx, fmt.Sprintf("USE %s", tcp.Status.Storage.Setup.Schema)); err != nil {
 		return fmt.Errorf("unable to switch DB for MySQL migration: %w", err)
 	}
 
@@ -80,7 +80,7 @@ func (c *MySQLConnection) Migrate(ctx context.Context, tcp kamajiv1alpha1.Tenant
 	// Executing the import to the target datastore
 	targetClient := target.(*MySQLConnection) //nolint:forcetypeassert
 
-	if _, err = targetClient.db.ExecContext(ctx, fmt.Sprintf("USE %s_%s", tcp.GetNamespace(), tcp.GetName())); err != nil {
+	if _, err = targetClient.db.ExecContext(ctx, fmt.Sprintf("USE %s", tcp.Status.Storage.Setup.Schema)); err != nil {
 		return fmt.Errorf("unable to switch DB for MySQL migration: %w", err)
 	}
 
