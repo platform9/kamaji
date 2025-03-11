@@ -107,5 +107,5 @@ kamaji-etcd:
 
 # -- Disable the analytics traces collection
 telemetry:
-  disabled: false
+  disabled: true
   
