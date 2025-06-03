@@ -286,6 +286,9 @@ type KonnectivityAgentSpec struct {
 	//
 	// WARNING: for last cut-off releases, the container image could be not available.
 	Version string `json:"version,omitempty"`
+	// UseHostNetwork for Konnectivity agent.
+	//+kubebuilder:default=false
+	UseHostNetwork bool `json:"useHostNetwork,omitempty"`
 	// Tolerations for the deployed agent.
 	// Can be customized to start the konnectivity-agent even if the nodes are not ready or tainted.
 	//+kubebuilder:default={{key: "CriticalAddonsOnly", operator: "Exists"}}

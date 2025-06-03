@@ -176,6 +176,10 @@ spec:
                                     type: string
                                 type: object
                               type: array
+                            useHostNetwork:
+                              default: false
+                              description: UseHostNetwork for Konnectivity agent.
+                              type: boolean
                             version:
                               description: |-
                                 Version for Konnectivity agent.
