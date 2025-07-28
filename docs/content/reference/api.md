@@ -39656,6 +39656,15 @@ Can be customized to start the konnectivity-agent even if the nodes are not read
         </td>
         <td>false</td>
       </tr><tr>
+        <td><b>useHostNetwork</b></td>
+        <td>boolean</td>
+        <td>
+          UseHostNetwork for Konnectivity agent.<br/>
+          <br/>
+            <i>Default</i>: false<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
         <td><b>version</b></td>
         <td>string</td>
         <td>

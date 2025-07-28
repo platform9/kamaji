@@ -79,7 +79,7 @@ Here the values you can override:
 | fullnameOverride | string | `""` |  |
 | healthProbeBindAddress | string | `":8081"` | The address the probe endpoint binds to. (default ":8081") |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"clastix/kamaji"` | The container image of the Kamaji controller. |
+| image.repository | string | `"quay.io/platform9/kamaji"` | The container image of the Kamaji controller. |
 | image.tag | string | `nil` | Overrides the image tag whose default is the chart appVersion. |
 | imagePullSecrets | list | `[]` |  |
 | kamaji-etcd | object | `{"clusterDomain":"cluster.local","datastore":{"enabled":true,"name":"default"},"deploy":true,"fullnameOverride":"kamaji-etcd"}` | Subchart: See https://github.com/clastix/kamaji-etcd/blob/master/charts/kamaji-etcd/values.yaml |
@@ -101,7 +101,7 @@ Here the values you can override:
 | serviceAccount.create | bool | `true` |  |
 | serviceAccount.name | string | `"kamaji-controller-manager"` |  |
 | serviceMonitor.enabled | bool | `false` | Toggle the ServiceMonitor true if you have Prometheus Operator installed and configured |
-| telemetry | object | `{"disabled":false}` | Disable the analytics traces collection |
+| telemetry | object | `{"disabled":true}` | Disable the analytics traces collection |
 | temporaryDirectoryPath | string | `"/tmp/kamaji"` | Directory which will be used to work with temporary files. (default "/tmp/kamaji") |
 | tolerations | list | `[]` | Kubernetes node taints that the Kamaji controller pods would tolerate |
 
