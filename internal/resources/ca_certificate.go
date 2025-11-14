@@ -39,12 +39,6 @@ func (r *CACertificate) GetHistogram() prometheus.Histogram {
 	return certificateauthorityCollector
 }
 
-func (r *CACertificate) GetHistogram() prometheus.Histogram {
-	certificateauthorityCollector = LazyLoadHistogramFromResource(certificateauthorityCollector, r)
-
-	return certificateauthorityCollector
-}
-
 func (r *CACertificate) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
 	return r.isRotatingCA || tenantControlPlane.Status.Certificates.CA.SecretName != r.resource.GetName() ||
 		tenantControlPlane.Status.Certificates.CA.Checksum != utilities.GetObjectChecksum(r.resource)

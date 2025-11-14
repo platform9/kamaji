@@ -39,12 +39,6 @@ func (r *FrontProxyClientCertificate) GetHistogram() prometheus.Histogram {
 	return frontproxycertificateCollector
 }
 
-func (r *FrontProxyClientCertificate) GetHistogram() prometheus.Histogram {
-	frontproxycertificateCollector = LazyLoadHistogramFromResource(frontproxycertificateCollector, r)
-
-	return frontproxycertificateCollector
-}
-
 func (r *FrontProxyClientCertificate) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
 	return tenantControlPlane.Status.Certificates.FrontProxyClient.Checksum != utilities.GetObjectChecksum(r.resource)
 }

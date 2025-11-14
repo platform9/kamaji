@@ -38,12 +38,6 @@ func (r *Certificate) GetHistogram() prometheus.Histogram {
 	return certificateCollector
 }
 
-func (r *Certificate) GetHistogram() prometheus.Histogram {
-	certificateCollector = resources.LazyLoadHistogramFromResource(certificateCollector, r)
-
-	return certificateCollector
-}
-
 func (r *Certificate) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
 	return tenantControlPlane.Status.Storage.Certificate.Checksum != utilities.GetObjectChecksum(r.resource)
 }

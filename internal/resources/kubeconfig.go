@@ -48,12 +48,6 @@ func (r *KubeconfigResource) GetHistogram() prometheus.Histogram {
 	return kubeconfigCollector
 }
 
-func (r *KubeconfigResource) GetHistogram() prometheus.Histogram {
-	kubeconfigCollector = LazyLoadHistogramFromResource(kubeconfigCollector, r)
-
-	return kubeconfigCollector
-}
-
 func (r *KubeconfigResource) ShouldStatusBeUpdated(_ context.Context, tcp *kamajiv1alpha1.TenantControlPlane) bool {
 	// an update is required only in case of missing status checksum, or name:
 	// this data is required by the following resource handlers.
@@ -200,8 +194,6 @@ func (r *KubeconfigResource) mutate(ctx context.Context, tenantControlPlane *kam
 		shouldCreate = shouldCreate || !kubeadm.IsKubeconfigCAValid(r.resource.Data[r.KubeConfigFileName], caCertificatesSecret.Data[kubeadmconstants.CACertName])
 		shouldCreate = shouldCreate || !kubeadm.IsKubeconfigValid(r.resource.Data[r.KubeConfigFileName], r.CertExpirationThreshold) // invalid kubeconfig, or expired client certificate
 		shouldCreate = shouldCreate || status.Checksum != checksum || len(r.resource.UID) == 0                                      // Wrong checksum
-
-		shouldRotate := utilities.IsRotationRequested(r.resource)
 
 		shouldRotate := utilities.IsRotationRequested(r.resource)
 

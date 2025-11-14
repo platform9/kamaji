@@ -39,12 +39,6 @@ func (r *APIServerKubeletClientCertificate) GetHistogram() prometheus.Histogram 
 	return clientcertificateCollector
 }
 
-func (r *APIServerKubeletClientCertificate) GetHistogram() prometheus.Histogram {
-	clientcertificateCollector = LazyLoadHistogramFromResource(clientcertificateCollector, r)
-
-	return clientcertificateCollector
-}
-
 func (r *APIServerKubeletClientCertificate) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
 	return tenantControlPlane.Status.Certificates.APIServerKubeletClient.Checksum != utilities.GetObjectChecksum(r.resource)
 }
