@@ -17,7 +17,7 @@ env:
   CHART_TAG: ${{ github.event.inputs.tag || github.ref_name }}
 
 jobs:
-  run:
+  helm:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v5
@@ -33,8 +33,8 @@ jobs:
           helm dependency build ./charts/kamaji
       - name: Change the version in Chart.yaml
         run: |
-          yq -i '.version="'${{ CHART_TAG }}'"' ./charts/kamaji/Chart.yaml
-          yq -i '.appVersion="'${{ CHART_TAG }}'"' ./charts/kamaji/Chart.yaml
+          yq -i '.version="'${{ env.CHART_TAG }}'"' ./charts/kamaji/Chart.yaml
+          yq -i '.appVersion="'${{ env.CHART_TAG }}'"' ./charts/kamaji/Chart.yaml
       - name: helm package
         run: helm package ./charts/kamaji
       - name: helm login
