@@ -8,6 +8,7 @@ on:
       - pf9-*
     branches:
       - master
+      - main
   workflow_dispatch:
     inputs:
       tag:
