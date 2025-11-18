@@ -13,6 +13,9 @@ on:
         required: true
         type: string
 
+env:
+  CHART_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
 jobs:
   run:
     runs-on: ubuntu-22.04
@@ -29,8 +32,6 @@ jobs:
           helm repo add clastix https://clastix.github.io/charts 
           helm dependency build ./charts/kamaji
       - name: Change the version in Chart.yaml
-        env:
-          CHART_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: |
           yq -i '.version="'${{ CHART_TAG }}'"' ./charts/kamaji/Chart.yaml
           yq -i '.appVersion="'${{ CHART_TAG }}'"' ./charts/kamaji/Chart.yaml

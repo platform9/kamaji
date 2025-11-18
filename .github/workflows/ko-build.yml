@@ -16,6 +16,9 @@ on:
         required: true
         type: string
 
+env:
+  IMAGE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
 jobs:
   ko:
     runs-on: ubuntu-22.04
@@ -33,9 +36,6 @@ jobs:
       - name: "ko: login to docker.io container registry"
         run: ./bin/ko login docker.io -u ${{ secrets.DOCKER_IO_USERNAME }} -p ${{ secrets.DOCKER_IO_TOKEN }}
       - name: "ko: build and push tag"
-        env:
-          IMAGE_TAG: ${{ github.event.inputs.tag || github.ref_name }}`
         run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=${{ IMAGE_TAG }} KO_LOCAL=false KO_PUSH=true build
-        if: github.event_name == 'workflow_dispatch'
       - name: "ko: build and push latest"
         run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=latest KO_LOCAL=false KO_PUSH=true build
