@@ -33,7 +33,9 @@ jobs:
       - name: "ko: login to docker.io container registry"
         run: ./bin/ko login docker.io -u ${{ secrets.DOCKER_IO_USERNAME }} -p ${{ secrets.DOCKER_IO_TOKEN }}
       - name: "ko: build and push tag"
-        run: make VERSION=${{ github.event.inputs.tag }} KO_LOCAL=false KO_PUSH=true build
+        env:
+          IMAGE_TAG: ${{ github.event.inputs.tag || github.ref_name }}`
+        run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=${{ IMAGE_TAG }} KO_LOCAL=false KO_PUSH=true build
         if: github.event_name == 'workflow_dispatch'
       - name: "ko: build and push latest"
-        run: make VERSION=latest KO_LOCAL=false KO_PUSH=true build
+        run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=latest KO_LOCAL=false KO_PUSH=true build
