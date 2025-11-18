@@ -29,14 +29,14 @@ jobs:
           version: 3.3.4
       - name: Building dependencies
         run: |-
-          helm repo add pf9-kamaji https://platform9.github.io/kamaji 
+          helm repo add clastix https://clastix.github.io/charts 
           helm dependency build ./charts/kamaji
       - name: Linting Kamaji Helm Chart
         run: helm lint ./charts/kamaji
       - name: Linting Kamaji CRDS Helm Chart
         run: helm lint ./charts/kamaji-crds
   release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
     needs: [ "lint", "diff" ]
     runs-on: ubuntu-22.04
     steps:
