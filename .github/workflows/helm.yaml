@@ -36,7 +36,7 @@ jobs:
       - name: Linting Kamaji CRDS Helm Chart
         run: helm lint ./charts/kamaji-crds
   release:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/mg/build-on-github-action')
+    if: github.event_name == 'push'
     needs: [ "lint", "diff" ]
     runs-on: ubuntu-22.04
     steps:
