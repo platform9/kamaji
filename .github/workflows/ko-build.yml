@@ -5,6 +5,7 @@ on:
     tags:
       - edge-*
       - v*
+      - pf9-*
     branches:
       - master
   workflow_dispatch:
