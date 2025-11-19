@@ -237,6 +237,8 @@ func (r *Agent) mutate(ctx context.Context, tenantControlPlane *kamajiv1alpha1.T
 		podTemplateSpec.Spec.Containers[0].Name = AgentName
 		podTemplateSpec.Spec.Containers[0].Command = []string{"/proxy-agent"}
 
+		podTemplateSpec.Spec.HostNetwork = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityAgentSpec.UseHostNetwork
+
 		args := make(map[string]string)
 		args["-v"] = "8"
 		args["--logtostderr"] = "true"

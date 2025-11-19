@@ -20,7 +20,7 @@ ENVTEST_K8S_VERSION = 1.31.0
 ENVTEST_VERSION ?= release-0.19
 
 # Image URL to use all building/pushing image targets
-CONTAINER_REPOSITORY ?= docker.io/clastix/kamaji
+CONTAINER_REPOSITORY ?= quay.io/platform9/kamaji
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -211,11 +211,11 @@ GIT_MODIFIED    ?= $$(echo "$(GIT_MODIFIED_1)$(GIT_MODIFIED_2)")
 GIT_REPO        ?= $$(git config --get remote.origin.url)
 BUILD_DATE      ?= $$(git log -1 --format="%at" | xargs -I{} date -d @{} +%Y-%m-%dT%H:%M:%S)
 
-LD_FLAGS ?= "-X github.com/clastix/kamaji/internal.GitCommit=$(GIT_HEAD_COMMIT) \
-             -X github.com/clastix/kamaji/internal.GitTag=$(VERSION) \
-             -X github.com/clastix/kamaji/internal.GitDirty=$(GIT_MODIFIED) \
-             -X github.com/clastix/kamaji/internal.BuildTime=$(BUILD_DATE) \
-             -X github.com/clastix/kamaji/internal.GitRepo=$(GIT_REPO)"
+LD_FLAGS ?= "-X github.com/platform9/kamaji/internal.GitCommit=$(GIT_HEAD_COMMIT) \
+             -X github.com/platform9/kamaji/internal.GitTag=$(VERSION) \
+             -X github.com/platform9/kamaji/internal.GitDirty=$(GIT_MODIFIED) \
+             -X github.com/platform9/kamaji/internal.BuildTime=$(BUILD_DATE) \
+             -X github.com/platform9/kamaji/internal.GitRepo=$(GIT_REPO)"
 
 KO_PUSH ?= false
 KO_LOCAL ?= true
@@ -227,6 +227,20 @@ build: $(KO)
 	LD_FLAGS=$(LD_FLAGS) \
 	KOCACHE=/tmp/ko-cache KO_DOCKER_REPO=${CONTAINER_REPOSITORY} \
 	$(KO) build ./ --bare --tags=$(VERSION) --local=$(KO_LOCAL) --push=$(KO_PUSH)
+
+# helm package
+CHART_VERSION ?= 0.0.0+latest
+APP_VERSION ?= $(VERSION)
+
+helm-package: $(HELM) $(YQ)
+	$(YQ) -i '.version="'${CHART_VERSION}'"' ./charts/kamaji/Chart.yaml
+	$(YQ) -i '.appVersion="'${APP_VERSION}'"' ./charts/kamaji/Chart.yaml
+	$(HELM) repo add clastix https://clastix.github.io/charts
+	$(HELM) dependency build ./charts/kamaji
+	$(HELM) package ./charts/kamaji
+
+helm-push: helm-package
+	$(HELM) push kamaji-${CHART_VERSION}.tgz oci://quay.io/platform9/pf9-kamaji
 
 ##@ Development
 
