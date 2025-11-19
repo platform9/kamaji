@@ -20,6 +20,22 @@ jobs:
   helm:
     runs-on: ubuntu-22.04
     steps:
+      - name: Show what we're building
+        run: |-
+          echo "github ref: ${{ github.ref }}"
+          echo "github ref name: ${{ github.ref_name }}"
+          echo "github ref type: ${{ github.ref_type }}"
+          echo "github event name: ${{ github.event_name }}"
+          echo "github event action: ${{ github.event.action }}"
+          echo "github event head ref: ${{ github.event.head_ref }}"
+          echo "github event base ref: ${{ github.event.base_ref }}"
+          echo "github event ref: ${{ github.event.ref }}"
+          echo "github event pull request: ${{ github.event.pull_request }}"
+          echo "github event pull request number: ${{ github.event.pull_request.number }}"
+          echo "github event pull request head ref: ${{ github.event.pull_request.head.ref }}"
+          echo "github event pull request base ref: ${{ github.event.pull_request.base.ref }}"
+          echo "Building tag/branch: $CHART_TAG"
+        
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
