@@ -5,9 +5,7 @@ on:
     tags:
       - edge-*
       - v*
-      - pf9-*
     branches:
-      - master
       - main
   workflow_dispatch:
     inputs:
@@ -17,7 +15,7 @@ on:
         type: string
 
 env:
-  IMAGE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+  TAG: ${{ github.event.inputs.tag || github.ref_name }}
 
 jobs:
   ko:
@@ -36,8 +34,8 @@ jobs:
       - name: "ko: login to docker.io container registry"
         run: ./bin/ko login docker.io -u ${{ secrets.DOCKER_IO_USERNAME }} -p ${{ secrets.DOCKER_IO_TOKEN }}
       - name: "ko: build and push tag"
-        run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=${{ env.IMAGE_TAG }} KO_LOCAL=false KO_PUSH=true build
-        if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
-        # if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/ci')
+        run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=${{ env.TAG }} KO_LOCAL=false KO_PUSH=true build
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
       - name: "ko: build and push latest"
         run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=latest KO_LOCAL=false KO_PUSH=true build
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main')

@@ -228,15 +228,19 @@ build: $(KO)
 	KOCACHE=/tmp/ko-cache KO_DOCKER_REPO=${CONTAINER_REPOSITORY} \
 	$(KO) build ./ --bare --tags=$(VERSION) --local=$(KO_LOCAL) --push=$(KO_PUSH)
 
+# helm package
+CHART_VERSION ?= 0.0.0+latest
+APP_VERSION ?= $(VERSION)
+
 helm-package: $(HELM) $(YQ)
-	$(YQ) -i '.version="'${VERSION}'"' ./charts/kamaji/Chart.yaml
-	$(YQ) -i '.appVersion="'${VERSION}'"' ./charts/kamaji/Chart.yaml
+	$(YQ) -i '.version="'${CHART_VERSION}'"' ./charts/kamaji/Chart.yaml
+	$(YQ) -i '.appVersion="'${APP_VERSION}'"' ./charts/kamaji/Chart.yaml
 	$(HELM) repo add clastix https://clastix.github.io/charts
 	$(HELM) dependency build ./charts/kamaji
 	$(HELM) package ./charts/kamaji
 
 helm-push: helm-package
-	$(HELM) push kamaji-${VERSION}.tgz oci://quay.io/platform9/pf9-kamaji
+	$(HELM) push kamaji-${CHART_VERSION}.tgz oci://quay.io/platform9/pf9-kamaji
 
 ##@ Development
 

@@ -2,59 +2,31 @@ name: Pf9-kamaji Helm Chart
 
 on:
   push:
-    branches: [ "master", "main" , "mg/build-with-github-action"]
-    tags: [ "edge-*", "v*", "pf9-*" ]
-  pull_request:
-    branches: [ "*" ]
+    branches: [ "main" ]
+    tags: [ "edge-*", "v*" ]
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to build"
+        description: "Used as Chart Version(must be semver2 compatible)"
         required: true
         type: string
 
 env:
-  CHART_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+  TAG: ${{ github.event.inputs.tag || github.ref_name }}
 
 jobs:
   helm:
     runs-on: ubuntu-22.04
     steps:
-      - name: Show what we're building
-        run: |-
-          echo "github ref: ${{ github.ref }}"
-          echo "github ref name: ${{ github.ref_name }}"
-          echo "github ref type: ${{ github.ref_type }}"
-          echo "github event name: ${{ github.event_name }}"
-          echo "github event action: ${{ github.event.action }}"
-          echo "github event head ref: ${{ github.event.head_ref }}"
-          echo "github event base ref: ${{ github.event.base_ref }}"
-          echo "github event ref: ${{ github.event.ref }}"
-          echo "github event pull request: ${{ github.event.pull_request }}"
-          echo "github event pull request number: ${{ github.event.pull_request.number }}"
-          echo "github event pull request head ref: ${{ github.event.pull_request.head.ref }}"
-          echo "github event pull request base ref: ${{ github.event.pull_request.base.ref }}"
-          echo "Building tag/branch: $CHART_TAG"
-        
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: azure/setup-helm@v4
-        with:
-          version: 3.3.4
-      - uses: chrisdickinson/setup-yq@latest
-      - name: Building dependencies
-        run: |-
-          helm repo add clastix https://clastix.github.io/charts 
-          helm dependency build ./charts/kamaji
-      - name: Change the version in Chart.yaml
-        run: |
-          yq -i '.version="'${{ env.CHART_TAG }}'"' ./charts/kamaji/Chart.yaml
-          yq -i '.appVersion="'${{ env.CHART_TAG }}'"' ./charts/kamaji/Chart.yaml
-      - name: helm package
-        run: helm package ./charts/kamaji
       - name: helm login
         run: helm login https://quay.io -u ${{ secrets.QUAY_IO_USERNAME }} -p ${{ secrets.QUAY_IO_TOKEN }}
       - name: helm push
-        run: helm push ./charts/kamaji-*.tgz
+        run: APP_VERSION=${{ env.TAG }} CHART_VERSION=${{ env.TAG }} make helm-push
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
+      - name: helm push latest
+        run: APP_VERSION=latest CHART_VERSION=0.0.0+latest make helm-push
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
 
