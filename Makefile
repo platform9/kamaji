@@ -20,7 +20,7 @@ ENVTEST_K8S_VERSION = 1.31.0
 ENVTEST_VERSION ?= release-0.19
 
 # Image URL to use all building/pushing image targets
-CONTAINER_REPOSITORY ?= docker.io/clastix/kamaji
+CONTAINER_REPOSITORY ?= quay.io/platform9/kamaji
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -266,6 +266,20 @@ build: $(KO)
 		--image-label "org.opencontainers.image.created=$$(date --utc '+%FT%H:%M:%SZ')" \
 		--image-label "org.opencontainers.image.revision=$(GIT_HEAD_COMMIT)" \
 		--image-label "org.opencontainers.image.version=$(VERSION)"
+
+# helm package
+CHART_VERSION ?= 0.0.0+latest
+APP_VERSION ?= $(VERSION)
+
+helm-package: $(HELM) $(YQ)
+	$(YQ) -i '.version="'${CHART_VERSION}'"' ./charts/kamaji/Chart.yaml
+	$(YQ) -i '.appVersion="'${APP_VERSION}'"' ./charts/kamaji/Chart.yaml
+	$(HELM) repo add clastix https://clastix.github.io/charts
+	$(HELM) dependency build ./charts/kamaji
+	$(HELM) package ./charts/kamaji
+
+helm-push: helm-package
+	$(HELM) push kamaji-${CHART_VERSION}.tgz oci://quay.io/platform9/pf9-kamaji
 
 ##@ Development
 
