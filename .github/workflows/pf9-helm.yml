@@ -21,10 +21,8 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: install helm
-        run: make helm
       - name: helm login
-        run: helm login https://quay.io -u ${{ secrets.QUAY_IO_USERNAME }} -p ${{ secrets.QUAY_IO_TOKEN }}
+        run: helm registry login quay.io -u ${{ secrets.QUAY_IO_USERNAME }} -p ${{ secrets.QUAY_IO_TOKEN }}
       - name: helm build & push with tag
         run: APP_VERSION=${{ env.TAG }} CHART_VERSION=${{ env.TAG }} make helm-push
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
