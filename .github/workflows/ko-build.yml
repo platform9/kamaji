@@ -38,4 +38,4 @@ jobs:
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
       - name: "ko: build and push latest"
         run: CONTAINER_REPOSITORY=quay.io/platform9/kamaji make VERSION=latest KO_LOCAL=false KO_PUSH=true build
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main')
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'

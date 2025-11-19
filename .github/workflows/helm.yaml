@@ -2,7 +2,7 @@ name: Helm Chart
 
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "*" ]
 
@@ -36,7 +36,7 @@ jobs:
       - name: Linting Kamaji CRDS Helm Chart
         run: helm lint ./charts/kamaji-crds
   release:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [ "lint", "diff" ]
     runs-on: ubuntu-22.04
     steps:
