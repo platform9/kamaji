@@ -1,8 +1,8 @@
-name: Build & push helm Chart
+name: Pf9-kamaji Helm Chart
 
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: [ "master", "main" , "mg/build-with-github-action"]
     tags: [ "edge-*", "v*", "pf9-*" ]
   pull_request:
     branches: [ "*" ]
