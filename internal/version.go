@@ -4,10 +4,11 @@
 package internal
 
 var (
-	ContainerRepository = "docker.io"
+	ContainerRepository   = "quay.io"
+	ContainerOrganization = "platform9"
 
 	GitRepo   = ""
-	GitTag    = "dev"
+	GitTag    = "v2025.12.0"
 	GitCommit = ""
 	GitDirty  = "dirty"
 	BuildTime = ""
