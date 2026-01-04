@@ -41780,6 +41780,13 @@ https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-dri
         </td>
         <td>false</td>
       </tr><tr>
+        <td><b>featureGates</b></td>
+        <td>map[string]boolean</td>
+        <td>
+          FeatureGates defines the kubernetes feature gates used to generate the kubelet configuration<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
         <td><b>preferredAddressTypes</b></td>
         <td>[]enum</td>
         <td>

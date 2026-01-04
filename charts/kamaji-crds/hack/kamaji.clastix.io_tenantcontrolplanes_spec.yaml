@@ -7118,6 +7118,11 @@ versions:
                           - systemd
                           - cgroupfs
                         type: string
+                      featureGates:
+                        additionalProperties:
+                          type: boolean
+                        description: FeatureGates defines the kubernetes feature gates used to generate the kubelet configuration
+                        type: object
                       preferredAddressTypes:
                         default:
                           - InternalIP
