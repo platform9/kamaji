@@ -94,7 +94,7 @@ func (m *Migrate) createOrUpdate(ctx context.Context) error {
 			{
 				Name: "leases.migrate.kamaji.clastix.io",
 				ClientConfig: admissionregistrationv1.WebhookClientConfig{
-					URL:      pointer.To(fmt.Sprintf("https://%s.%s.svc:443/migrate", m.WebhookServiceName, m.WebhookNamespace)),
+					URL:      pointer.To(fmt.Sprintf("https://%s.%s.svc.cluster.local:443/migrate", m.WebhookServiceName, m.WebhookNamespace)),
 					CABundle: m.WebhookCABundle,
 				},
 				Rules: []admissionregistrationv1.RuleWithOperations{
@@ -138,7 +138,7 @@ func (m *Migrate) createOrUpdate(ctx context.Context) error {
 			{
 				Name: "catchall.migrate.kamaji.clastix.io",
 				ClientConfig: admissionregistrationv1.WebhookClientConfig{
-					URL:      pointer.To(fmt.Sprintf("https://%s.%s.svc:443/migrate", m.WebhookServiceName, m.WebhookNamespace)),
+					URL:      pointer.To(fmt.Sprintf("https://%s.%s.svc.cluster.local:443/migrate", m.WebhookServiceName, m.WebhookNamespace)),
 					CABundle: m.WebhookCABundle,
 				},
 				Rules: []admissionregistrationv1.RuleWithOperations{
