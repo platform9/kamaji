@@ -379,10 +379,10 @@ func (d Deployment) buildScheduler(podSpec *corev1.PodSpec, tenantControlPlane k
 			},
 		},
 		InitialDelaySeconds: 0,
-		TimeoutSeconds:      1,
+		TimeoutSeconds:      10,
 		PeriodSeconds:       10,
 		SuccessThreshold:    1,
-		FailureThreshold:    3,
+		FailureThreshold:    18,
 	}
 
 	switch {
@@ -471,10 +471,10 @@ func (d Deployment) buildControllerManager(podSpec *corev1.PodSpec, tenantContro
 			},
 		},
 		InitialDelaySeconds: 0,
-		TimeoutSeconds:      1,
+		TimeoutSeconds:      10,
 		PeriodSeconds:       10,
 		SuccessThreshold:    1,
-		FailureThreshold:    3,
+		FailureThreshold:    18,
 	}
 	switch {
 	case tenantControlPlane.Spec.ControlPlane.Deployment.Resources == nil:
@@ -602,10 +602,10 @@ func (d Deployment) buildKubeAPIServer(podSpec *corev1.PodSpec, tenantControlPla
 			},
 		},
 		InitialDelaySeconds: 0,
-		TimeoutSeconds:      1,
+		TimeoutSeconds:      10,
 		PeriodSeconds:       10,
 		SuccessThreshold:    1,
-		FailureThreshold:    3,
+		FailureThreshold:    18,
 	}
 	podSpec.Containers[index].ImagePullPolicy = corev1.PullAlways
 	// Volume mounts
