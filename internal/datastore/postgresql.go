@@ -87,6 +87,10 @@ func (r *PostgreSQLConnection) Migrate(ctx context.Context, tcp kamajiv1alpha1.T
 			return fmt.Errorf("unable to copy to the target datastore: %w", err)
 		}
 
+		if _, err := tx.ExecContext(ctx, "SELECT setval(pg_get_serial_sequence('kine', 'id'), (SELECT max(id) FROM kine))"); err != nil {
+			return fmt.Errorf("unable to set the correct value for kine id sequence: %w", err)
+		}
+
 		return nil
 	})
 	if err != nil {
