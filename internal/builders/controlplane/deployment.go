@@ -56,6 +56,12 @@ const (
 	// probe InitialDelaySeconds (default: 20).
 	schedulerStartupInitialDelayEnvVar            = "KAMAJI_SCHEDULER_STARTUP_INITIAL_DELAY_SECONDS"
 	schedulerStartupInitialDelaySecondsDefault int32 = 20
+
+	// controllerManagerStartupInitialDelayEnvVar is the env var name that can be declared
+	// in the TCP spec's AdditionalEnv.ControllerManager to override the controller-manager
+	// startup probe InitialDelaySeconds (default: 20).
+	controllerManagerStartupInitialDelayEnvVar            = "KAMAJI_CONTROLLER_MANAGER_STARTUP_INITIAL_DELAY_SECONDS"
+	controllerManagerStartupInitialDelaySecondsDefault int32 = 20
 )
 
 type DataStoreOverrides struct {
@@ -460,10 +466,16 @@ func (d Deployment) buildControllerManager(podSpec *corev1.PodSpec, tenantContro
 		args = utilities.MergeMaps(args, utilities.ArgsFromSliceToMap(extraArgs.ControllerManager))
 	}
 
+	var controllerManagerEnvVars []corev1.EnvVar
+	if additionalEnv := tenantControlPlane.Spec.ControlPlane.Deployment.AdditionalEnv; additionalEnv != nil {
+		controllerManagerEnvVars = additionalEnv.ControllerManager
+	}
+
 	podSpec.Containers[index].Name = "kube-controller-manager"
 	podSpec.Containers[index].Image = tenantControlPlane.Spec.ControlPlane.Deployment.RegistrySettings.KubeControllerManagerImage(tenantControlPlane.Spec.Kubernetes.Version)
 	podSpec.Containers[index].Command = []string{"kube-controller-manager"}
 	podSpec.Containers[index].Args = utilities.ArgsFromMapToSlice(args)
+	podSpec.Containers[index].Env = controllerManagerEnvVars
 	podSpec.Containers[index].LivenessProbe = &corev1.Probe{
 		ProbeHandler: corev1.ProbeHandler{
 			HTTPGet: &corev1.HTTPGetAction{
@@ -486,7 +498,10 @@ func (d Deployment) buildControllerManager(podSpec *corev1.PodSpec, tenantContro
 				Scheme: corev1.URISchemeHTTPS,
 			},
 		},
-		InitialDelaySeconds: 0,
+		// Give kube-apiserver (co-located in the same pod) time to become
+		// ready before the controller-manager first attempts to connect,
+		// avoiding the CrashLoopBackoff that otherwise dominates cluster creation time.
+		InitialDelaySeconds: controllerManagerStartupInitialDelay(controllerManagerEnvVars),
 		TimeoutSeconds:      1,
 		PeriodSeconds:       10,
 		SuccessThreshold:    1,
@@ -1161,4 +1176,19 @@ func schedulerStartupInitialDelay(envVars []corev1.EnvVar) int32 {
 	}
 
 	return schedulerStartupInitialDelaySecondsDefault
+}
+
+// controllerManagerStartupInitialDelay returns the InitialDelaySeconds for the controller-manager startup probe.
+// It reads from the KAMAJI_CONTROLLER_MANAGER_STARTUP_INITIAL_DELAY_SECONDS env var declared in the TCP spec;
+// if absent or unparseable, it falls back to the default.
+func controllerManagerStartupInitialDelay(envVars []corev1.EnvVar) int32 {
+	for _, e := range envVars {
+		if e.Name == controllerManagerStartupInitialDelayEnvVar {
+			if v, err := strconv.ParseInt(e.Value, 10, 32); err == nil {
+				return int32(v)
+			}
+		}
+	}
+
+	return controllerManagerStartupInitialDelaySecondsDefault
 }
