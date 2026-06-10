@@ -53,15 +53,15 @@ const (
 
 	// schedulerStartupInitialDelayEnvVar is the env var name that can be declared
 	// in the TCP spec's AdditionalEnv.Scheduler to override the scheduler startup
-	// probe InitialDelaySeconds (default: 20).
-	schedulerStartupInitialDelayEnvVar            = "KAMAJI_SCHEDULER_STARTUP_INITIAL_DELAY_SECONDS"
-	schedulerStartupInitialDelaySecondsDefault int32 = 20
+	// probe InitialDelaySeconds (default: 0).
+	schedulerStartupInitialDelayEnvVar               = "KAMAJI_SCHEDULER_STARTUP_INITIAL_DELAY_SECONDS"
+	schedulerStartupInitialDelaySecondsDefault int32 = 0
 
 	// controllerManagerStartupInitialDelayEnvVar is the env var name that can be declared
 	// in the TCP spec's AdditionalEnv.ControllerManager to override the controller-manager
 	// startup probe InitialDelaySeconds (default: 20).
-	controllerManagerStartupInitialDelayEnvVar            = "KAMAJI_CONTROLLER_MANAGER_STARTUP_INITIAL_DELAY_SECONDS"
-	controllerManagerStartupInitialDelaySecondsDefault int32 = 20
+	controllerManagerStartupInitialDelayEnvVar               = "KAMAJI_CONTROLLER_MANAGER_STARTUP_INITIAL_DELAY_SECONDS"
+	controllerManagerStartupInitialDelaySecondsDefault int32 = 0
 )
 
 type DataStoreOverrides struct {
