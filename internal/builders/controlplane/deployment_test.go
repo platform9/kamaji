@@ -17,6 +17,7 @@ func schedulerContainerIndex(podSpec corev1.PodSpec) int {
 			return i
 		}
 	}
+
 	return -1
 }
 
@@ -26,6 +27,7 @@ func controllerManagerContainerIndex(podSpec corev1.PodSpec) int {
 			return i
 		}
 	}
+
 	return -1
 }
 
