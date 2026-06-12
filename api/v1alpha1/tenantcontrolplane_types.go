@@ -218,6 +218,9 @@ type DeploymentSpec struct {
 	// AdditionalVolumeMounts allows to mount an additional volume into each component of the Control Plane
 	// (kube-apiserver, controller-manager, and scheduler).
 	AdditionalVolumeMounts *AdditionalVolumeMounts `json:"additionalVolumeMounts,omitempty"`
+	// AdditionalEnv allows declaring additional environment variables for each component of the Control Plane
+	// (kube-apiserver, controller-manager, and scheduler).
+	AdditionalEnv *ControlPlaneAdditionalEnv `json:"additionalEnv,omitempty"`
 	//+kubebuilder:default="default"
 	// ServiceAccountName allows to specify the service account to be mounted to the pods of the Control plane deployment
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
@@ -228,6 +231,15 @@ type AdditionalVolumeMounts struct {
 	APIServer         []corev1.VolumeMount `json:"apiServer,omitempty"`
 	ControllerManager []corev1.VolumeMount `json:"controllerManager,omitempty"`
 	Scheduler         []corev1.VolumeMount `json:"scheduler,omitempty"`
+}
+
+// ControlPlaneAdditionalEnv allows declaring additional environment variables for each Control Plane component.
+type ControlPlaneAdditionalEnv struct {
+	APIServer         []corev1.EnvVar `json:"apiServer,omitempty"`
+	ControllerManager []corev1.EnvVar `json:"controllerManager,omitempty"`
+	Scheduler         []corev1.EnvVar `json:"scheduler,omitempty"`
+	// Available only if Kamaji is running using Kine as backing storage.
+	Kine []corev1.EnvVar `json:"kine,omitempty"`
 }
 
 // ControlPlaneExtraArgs allows specifying additional arguments to the Control Plane components.
